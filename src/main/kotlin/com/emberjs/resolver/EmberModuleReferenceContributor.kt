@@ -1,7 +1,6 @@
 package com.emberjs.resolver
 
 import com.emberjs.cli.EmberCliProjectConfigurator
-import com.emberjs.utils.emberRoot
 import com.emberjs.utils.isInRepoAddon
 import com.emberjs.utils.parents
 import com.intellij.lang.javascript.DialectDetector
@@ -50,7 +49,7 @@ class EmberModuleReferenceContributor : JSModuleReferenceContributor {
             listOf(hostPackageRoot) + EmberCliProjectConfigurator.inRepoAddons(hostPackageRoot)
         } else {
             // check node_modules
-            listOfNotNull(host.emberRoot?.findChild("node_modules")?.findChild(packageName))
+            listOfNotNull(hostPackageRoot.findChild("node_modules")?.findChild(packageName))
         }
 
         /** Search the `/app` and `/addon` directories of the root and each in-repo-addon */
