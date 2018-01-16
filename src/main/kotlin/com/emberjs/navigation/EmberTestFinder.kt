@@ -21,7 +21,7 @@ class EmberTestFinder : TestFinder {
         val name = EmberName.from(file) ?: return emptyList()
 
         val search = listOf("-test", "-integration-test")
-                .map { EmberName("${name.type}$it", name.name) }
+                .map { EmberName(name.emberPackageName,"${name.type}$it", name.name) }
 
         val psiManager = PsiManager.getInstance(project)
         val scope = ProjectScope.getAllScope(project)
@@ -39,7 +39,7 @@ class EmberTestFinder : TestFinder {
 
         val name = EmberName.from(file) ?: return emptyList()
 
-        val search = EmberName(name.type.removeSuffix("-test").removeSuffix("-integration"), name.name)
+        val search = EmberName(name.emberPackageName, name.type.removeSuffix("-test").removeSuffix("-integration"), name.name)
 
         val psiManager = PsiManager.getInstance(project)
         val scope = ProjectScope.getAllScope(project)

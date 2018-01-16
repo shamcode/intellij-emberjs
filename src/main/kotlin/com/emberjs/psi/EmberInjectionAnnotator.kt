@@ -65,7 +65,7 @@ class EmberInjectionAnnotator : Annotator {
                 else -> key
             }
 
-            return EmberName(type, name.dasherize())
+            return EmberName("", type, name.dasherize())
         }
     }
 }

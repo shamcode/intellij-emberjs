@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile
 class EmberGotoRelatedItem(val name: EmberName, element: PsiElement) : GotoRelatedItem(element) {
 
     override fun getCustomName() = name.displayName
-    override fun getCustomContainerName() = ""
+    override fun getCustomContainerName() = name.emberPackageName
     override fun getCustomIcon() = EmberIconProvider().getIcon(name) ?: EmberIcons.EMPTY_16
 
     companion object {

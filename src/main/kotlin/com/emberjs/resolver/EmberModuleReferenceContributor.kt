@@ -78,10 +78,10 @@ class EmberModuleReferenceContributor : JSModuleReferenceContributor {
 
             override fun computeDefaultContexts(): MutableCollection<PsiFileSystemItem> {
                 return roots
-                        .flatMap { it.multiResolve(false).asIterable() }
-                        .map { it.element }
-                        .filterIsInstance(PsiFileSystemItem::class.java)
-                        .toMutableList()
+                    .flatMap { it.multiResolve(false).asIterable() }
+                    .map { it.element }
+                    .filterIsInstance(PsiFileSystemItem::class.java)
+                    .toMutableList()
             }
         }
 

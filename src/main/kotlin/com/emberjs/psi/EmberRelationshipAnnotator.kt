@@ -73,7 +73,7 @@ class EmberRelationshipAnnotator : Annotator {
                 else -> key
             }
 
-            return EmberName(MODEL, name.dasherize())
+            return EmberName("", MODEL, name.dasherize())
         }
     }
 }

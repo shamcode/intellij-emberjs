@@ -29,17 +29,32 @@ class EmberGotoRelatedProvider : GotoRelatedProvider() {
 
         val modulesToSearch = when {
             name.type == "template" && name.name.startsWith("components/") ->
-                listOf(EmberName("component", name.name.removePrefix("components/")))
-
+                listOf(EmberName(name.emberPackageName,"component", name.name.removePrefix("components/")))
             name.type == "component" ->
-                listOf(EmberName("template", "components/${name.name}"))
+                listOf(EmberName(name.emberPackageName,"template", "components/${name.name}"))
+            else -> RELATED_TYPES[name.type].orEmpty().flatMap {
+                when {
+                    name.isInApp || name.isInAddon ->
+                        listOf(
+                                EmberName("${name.onlyPackageName}/app", it, name.name),
+                                EmberName("${name.onlyPackageName}/addon", it, name.name)
+                        )
+                    else -> listOf(EmberName(name.emberPackageName, it, name.name))
+                }
+            }
+        }
 
-            else -> RELATED_TYPES[name.type].orEmpty().map { EmberName(it, name.name) }
+        val appAddonModulesToSearch = when {
+            name.isInApp ->
+                listOf(EmberName("${name.onlyPackageName}/addon", name.type, name.name))
+            name.isInAddon ->
+                listOf(EmberName("${name.onlyPackageName}/app", name.type, name.name))
+            else -> emptyList()
         }
 
         val scope = ProjectScope.getAllScope(project)
 
-        return EmberNameIndex.getFilteredKeys(scope) { it in modulesToSearch }
+        return EmberNameIndex.getFilteredKeys(scope) { it in modulesToSearch || it in appAddonModulesToSearch }
                 .flatMap { module -> EmberNameIndex.getContainingFiles(module, scope).map { module to it } }
     }
 
