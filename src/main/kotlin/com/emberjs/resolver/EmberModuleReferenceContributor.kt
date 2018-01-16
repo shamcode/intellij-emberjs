@@ -33,8 +33,13 @@ class EmberModuleReferenceContributor : JSModuleReferenceContributor {
             return emptyArray()
         }
 
+        val matcher = PackageNamePattern.matcher(unquotedRefText)
+        if (!matcher.find()) {
+            return emptyArray()
+        }
+
         // e.g. `my-app/controllers/foo` -> `my-app`
-        val packageName = unquotedRefText.substringBefore('/')
+        val packageName = matcher.group(1)
 
         // e.g. `my-app/controllers/foo` -> `controllers/foo`
         val importPath = unquotedRefText.removePrefix("$packageName/")
@@ -49,7 +54,7 @@ class EmberModuleReferenceContributor : JSModuleReferenceContributor {
             listOf(hostPackageRoot) + EmberCliProjectConfigurator.inRepoAddons(hostPackageRoot)
         } else {
             // check node_modules
-            listOfNotNull(hostPackageRoot.findChild("node_modules")?.findChild(packageName))
+            listOfNotNull(hostPackageRoot.findChild("node_modules")?.findFileByRelativePath(packageName))
         }
 
         /** Search the `/app` and `/addon` directories of the root and each in-repo-addon */
@@ -73,10 +78,10 @@ class EmberModuleReferenceContributor : JSModuleReferenceContributor {
 
             override fun computeDefaultContexts(): MutableCollection<PsiFileSystemItem> {
                 return roots
-                    .flatMap { it.multiResolve(false).asIterable() }
-                    .map { it.element }
-                    .filterIsInstance(PsiFileSystemItem::class.java)
-                    .toMutableList()
+                        .flatMap { it.multiResolve(false).asIterable() }
+                        .map { it.element }
+                        .filterIsInstance(PsiFileSystemItem::class.java)
+                        .toMutableList()
             }
         }
 
@@ -117,4 +122,6 @@ class EmberModuleReferenceContributor : JSModuleReferenceContributor {
 
     /** Captures `my-app` from the string `name: 'my-app'` */
     private val NamePattern = Pattern.compile("name:\\s*['\"](.+?)['\"]")
+
+    private val PackageNamePattern = Pattern.compile("(@[^/]+/[^/]+|[^/]+)/?")
 }
