@@ -2,6 +2,7 @@ package com.emberjs.resolver
 
 import com.emberjs.cli.EmberCliProjectConfigurator
 import com.emberjs.utils.isInRepoAddon
+import com.emberjs.utils.parentModule
 import com.emberjs.utils.parents
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.frameworks.amd.JSModuleReference
@@ -54,7 +55,10 @@ class EmberModuleReferenceContributor : JSModuleReferenceContributor {
             listOf(hostPackageRoot) + EmberCliProjectConfigurator.inRepoAddons(hostPackageRoot)
         } else {
             // check node_modules
-            listOfNotNull(hostPackageRoot.findChild("node_modules")?.findFileByRelativePath(packageName))
+            listOfNotNull(
+                    hostPackageRoot.findChild("node_modules")?.findFileByRelativePath(packageName)
+                    ?: hostPackageRoot.parents.find { it.findChild("package.json") != null }?.findChild("node_modules")?.findFileByRelativePath(packageName)
+            )
         }
 
         /** Search the `/app` and `/addon` directories of the root and each in-repo-addon */
