@@ -44,18 +44,13 @@ class EmberGotoRelatedProvider : GotoRelatedProvider() {
             }
         }
 
-        val appAddonModulesToSearch = when {
-            name.isInApp ->
-                listOf(EmberName("${name.onlyPackageName}/addon", name.type, name.name))
-            name.isInAddon ->
-                listOf(EmberName("${name.onlyPackageName}/app", name.type, name.name))
-            else -> emptyList()
-        }
-
         val scope = ProjectScope.getAllScope(project)
 
-        return EmberNameIndex.getFilteredKeys(scope) { it in modulesToSearch || it in appAddonModulesToSearch }
-                .flatMap { module -> EmberNameIndex.getContainingFiles(module, scope).map { module to it } }
+        return EmberNameIndex.getFilteredKeys(scope) { it in modulesToSearch || (
+                it.emberPackageName != name.emberPackageName &&
+                it.name == name.name &&
+                it.type == name.type
+        ) }.flatMap { module -> EmberNameIndex.getContainingFiles(module, scope).map { module to it } }
     }
 
     companion object {
