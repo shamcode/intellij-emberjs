@@ -17,7 +17,7 @@ class EmberIconProvider : IconProvider() {
     fun getIcon(psiFile: PsiFile?) = psiFile?.virtualFile?.let { getIcon(it) }
 
     fun getIcon(file: VirtualFile) = when (file.extension) {
-        "js", "ts" -> EmberName.from(file)?.let { getIcon(it) }
+        "js", "ts", "hbs" -> EmberName.from(file)?.let { getIcon(it) }
         else -> null
     }
 
